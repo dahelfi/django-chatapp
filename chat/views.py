@@ -11,7 +11,6 @@ from .forms import SignUpForm
 
 
 @login_required(login_url='/login/')
-
 def index(request):
     if(request.method == "POST"):
         print("Recieved Data" + request.POST["textmessage"])

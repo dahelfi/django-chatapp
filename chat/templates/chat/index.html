@@ -47,6 +47,7 @@
     <form onsubmit="sendMessage(); return false;" method="post">
         {% csrf_token %}
         <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input type="hidden" name="redirect" value="{{ redirect }}"/>
             <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
             <label class="mdl-textfield__label" for="messageField">Text...</label>
         </div>
