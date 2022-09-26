@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<style>
+  .d-none{
+      display: none;
+  }
+
+</style>
+
+<script>
+
+  async function sendRegisterData() {
+      document.getElementById('p2').classList.remove('d-none');
+      let fd = new FormData();
+      let token = '{{ csrf_token }}';
+      
+      fd.append('username', username.value);
+      fd.append('email', email.value);
+      fd.append('password1', password1.value)
+      fd.append('password2', password2.value)
+      fd.append('csrfmiddlewaretoken', token);
+      
+      try {
+          
+          let response = await fetch('/sign_up/', {
+              method: 'POST',
+              body: fd
+          });
+          
+          let json = await response.json();
+          if(json.stopLoadingAnimation){
+              document.getElementById('p2').classList.add('d-none');
+          }
+
+      } catch (e) {
+          console.error('An error occured', e);
+      }
+
+
+  }
+</script>
+
+<div>
+    <div style="box-shadow: 10px 10px 100px rgba(0,0,0,0.19), 0px 10px 10px rgba(0,0,0,0.23); border-radius: 5px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
+        <div class="mdl-card__title">
+          <h2 class="mdl-card__title-text">Sign up</h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+        <form method="POST" onsubmit="sendRegisterData(); return false;"> 
+            {% csrf_token %} 
+            <input type="hidden" name="redirect" value="{{ redirect }}"> 
+            <div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
+            <div style="display: flex; align-items: center;"> 
+              <i class="material-icons" style="margin-right: 8px;">person</i>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input class="mdl-textfield__input" name="username" type="text" id="username"/>
+                  <label class="mdl-textfield__label">username</label>
+              </div>
+
+          </div>
+         
+          <div style="display: flex; align-items: center;">
+              <i class="material-icons" style="margin-right: 8px;">mail</i>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" name="password" type="text" id="email"/>
+              <label class="mdl-textfield__label">email</label>
+          </div>
+          </div>
+
+          <div style="display: flex; align-items: center;"> 
+            <i class="material-icons" style="margin-right: 8px;">lock</i>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" name="username" type="password" id="password1"/>
+                <label class="mdl-textfield__label">password</label>
+            </div>
+
+        </div>
+        <div style="display: flex; align-items: center;"> 
+          <i class="material-icons" style="margin-right: 8px;">lock</i>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" name="username" type="password" id="password2"/>
+              <label class="mdl-textfield__label">confirm password</label>
+          </div>
+
+      </div>
+          <div style="display: flex; align-items: center; height: 100%; width: 100%;">
+              <button style="width: 100px;" type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                  Register
+                </button> 
+                <div style="display: flex;">
+                  <p>Already signed up?</p>
+                  <a href="/login/">Sign Up</a>
+                </div>
+          </div>
+        </form> 
+      </div>
+    </div>
+</div>
+{%  endblock %}

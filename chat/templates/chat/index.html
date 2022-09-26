@@ -1,0 +1,108 @@
+{% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
+
+<script>
+    async function sendMessage() {
+        let fd = new FormData();
+        let token = '{{ csrf_token }}';
+
+        fd.append('textmessage', messageField.value);
+        fd.append('csrfmiddlewaretoken', token);
+        try {
+            messageContainer.innerHTML += `
+                <div id="deleteMessage">
+                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i class="color-gray">${messageField.value} </i>
+                </div>`;
+            let response = await fetch('/chat/', {
+                method: 'POST',
+                body: fd
+            });
+            let json = await response.json();
+            console.log('json is', json);
+            document.getElementById('deleteMessage').remove();
+            messageContainer.innerHTML += `
+                <div">
+                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i>${messageField.value} </i>
+                </div>`;
+
+            console.log('Success!!');
+
+
+
+        } catch (e) {
+            console.error('An error occured', e);
+        }
+
+
+    }
+
+
+</script>
+
+<div id="messageContainer" style="height: 100%">
+    {% for message in messages %}
+    <div>
+        <span class="color-gray">[{{ message.created_at }}]</span> {{ message.author.first_name }}: <i>{{ message.text }} </i>
+    </div>
+    {% endfor %}
+    <form onsubmit="sendMessage(); return false;" method="post">
+        {% csrf_token %}
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+            <label class="mdl-textfield__label" for="messageField">Text...</label>
+        </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                        Send
+        </button>
+    
+    </form>
+
+</div>
+    
+<button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+   New Chat
+  </button>
+        
+            <dialog class="mdl-dialog" style="width: 60vw; height: 80vh">
+              <h4 class="mdl-dialog__title">Select your new Chatpartner</h4>
+              <div class="mdl-dialog__content" style="width: 90%; height: 80%">
+                <div id="users-container">
+
+                    {% for user in users %}
+
+                    <div>Hier dein Name: {{ user.username }}</div>
+                    {% endfor %}
+
+                </div>
+          
+              </div>
+              <div class="mdl-dialog__actions">
+                <button type="button" class="mdl-button">Agree</button>
+                <button type="button" class="mdl-button close">Close</button>
+              </div>
+            </dialog>
+            <script>
+              let dialog = document.querySelector('dialog');
+              let showDialogButton = document.querySelector('#show-dialog');
+              console.log("hier dein dialog: ", dialog.showModal)
+              showDialogButton.addEventListener('click', function() {
+                dialog.showModal();
+              });
+              dialog.querySelector('.close').addEventListener('click', function() {
+                dialog.close();
+              });
+            </script>
+     
+
+
+
+
+
+
+
+{% else %}
+<h1>Nicht eingeloggt</h1>
+<p>
+    Du bist aktuell nicht eingeloggt. Bitte logge dich ein.<br> Bitte klicke <a href="/login/">hier</a>.
+</p>
+
+{% endif %} {% endblock %}
