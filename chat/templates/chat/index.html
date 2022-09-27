@@ -37,31 +37,56 @@
 
 
 </script>
-
-<div id="messageContainer" style="height: 100%">
-    {% for message in messages %}
-    <div>
-        <span class="color-gray">[{{ message.created_at }}]</span> {{ message.author.first_name }}: <i>{{ message.text }} </i>
-    </div>
-    {% endfor %}
-    <form onsubmit="sendMessage(); return false;" method="post">
-        {% csrf_token %}
-        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input type="hidden" name="redirect" value="{{ redirect }}"/>
-            <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
-            <label class="mdl-textfield__label" for="messageField">Text...</label>
-        </div>
-        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                        Send
-        </button>
-    
-    </form>
+<div id="information-bar">
+    <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+        <i class="material-icons">chat</i>
+       </button> 
 
 </div>
-    
-<button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-   New Chat
-  </button>
+
+<div id="messageContainer">
+    {% for message in messages %}
+
+
+    <div id="card" >
+        <div style="height: 30px; display: flex; justify-content: flex-start;">
+            <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+        </div>
+         
+  
+        <div>
+            {{ message.text }}
+        </div>
+        <div id="createdAt">
+            <span>{{message.created_at}}</span>
+        </div>
+      </div>
+    <!-- <div>
+        <span class="color-gray">[{{ message.created_at }}]</span> {{ message.author.first_name }}: <i>{{ message.text }} </i>
+    </div> -->
+    {% endfor %}
+    <div id="sendArea">
+
+        <form onsubmit="sendMessage(); return false;" method="post">
+            {% csrf_token %}
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input type="hidden" name="redirect" value="{{ redirect }}"/>
+                <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+                <label class="mdl-textfield__label" for="messageField">Text...</label>
+            </div>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                <i class="material-icons">send</i>
+            </button>
+        
+        </form>
+
+    </div>
+ 
+        
+
+
+</div>
+
         
             <dialog class="mdl-dialog" style="width: 60vw; height: 80vh">
               <h4 class="mdl-dialog__title">Select your new Chatpartner</h4>
@@ -70,7 +95,14 @@
 
                     {% for user in users %}
 
-                    <div>Hier dein Name: {{ user.username }}</div>
+                    <div id="userelement-card">
+                        <span style="width: 40%;">
+                            {{user.username }}
+                        </span>
+                        <span style="width: 40%;">
+                            {{user.email }}
+                        </span>
+                    </div>
                     {% endfor %}
 
                 </div>
@@ -84,7 +116,6 @@
             <script>
               let dialog = document.querySelector('dialog');
               let showDialogButton = document.querySelector('#show-dialog');
-              console.log("hier dein dialog: ", dialog.showModal)
               showDialogButton.addEventListener('click', function() {
                 dialog.showModal();
               });
@@ -92,13 +123,6 @@
                 dialog.close();
               });
             </script>
-     
-
-
-
-
-
-
 
 {% else %}
 <h1>Nicht eingeloggt</h1>
