@@ -12,16 +12,18 @@ from .forms import SignUpForm
 
 @login_required(login_url='/login/')
 def index(request):
-    if(request.method == "POST"):
-        print("Recieved Data" + request.POST["textmessage"])
-        myChat = Chat.objects.get(id=2)
-        new_message = Message.objects.create(text = request.POST["textmessage"], chat = myChat, author = request.user, reciever = request.user )
+    allUsers = User.objects.all
+    allChats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
+    if(request.method == "POST" and request.POST.get("textmessage") and request.POST.get("chatId")):
+        myChat = Chat.objects.get( id = request.POST.get("chatId"))
+        new_message = Message.objects.create(text = request.POST["textmessage"], chat = myChat, author = request.user, reciever = request.user)
         serialized_obj = serializers.serialize('json', [new_message, ])
         return JsonResponse(serialized_obj[1:-1], safe=False)
-    textMessages = Message.objects.all
-    allUsers = User.objects.all
-    allChats = Chat.objects.all
-    return render(request, 'chat/index.html', {'messages': textMessages, 'users': allUsers, "chats": allChats})
+    elif(request.method == "POST" and request.POST.get("chatId")):
+        print("ich werde ausgeführt mit der ChatID: "+ request.POST.get("chatId"))
+        text_messages = Message.objects.filter(chat_id=request.POST.get("chatId"))
+        return render(request, 'chat/index.html', {'messages': text_messages,'users': allUsers, "chats": allChats})
+    return render(request, 'chat/index.html', {'users': allUsers, "chats": allChats})
 
 
 def login_view(request):
@@ -32,39 +34,32 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(redirect)
         else:
-            return render(request, 'auth/login.html', {'wrongPassword': True, 'redirect': redirect} )
-    return render(request, 'auth/login.html', {'redirect': redirect})
+            return HTTPResponseBadRedirect(request)
+    return render(request, 'auth/login.html')
 
 def sign_up_view(request):
+    redirect = "/"
     if request.method == 'POST':
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password1")
-        print("hier dein username: "+ username)
-        print("hier dein passwort: "+ password)
-        user = User.objects.create_user(username = username,
-                                  email=email,
-                                  password=password)
-        answer = {"stopLoadingAnimation": "true"}
-        print("ich werde ausgeführt")
-        user=authenticate(request, username=username, password = password)
+        user = User.objects.create_user(username = request.POST.get("username"),email=request.POST.get("email"),password=request.POST.get("password1"))
         if user is not None:
-            login(request, user)
-        return JsonResponse( answer, safe=False)
-       
+           user=authenticate(request, username=request.POST.get("username"), password = request.POST.get("password1"))
+           login(request, user)
+           return HttpResponseRedirect(redirect)
+        else:
+           return HTTPResponseBadRedirect(request)
     return render(request, 'auth/sign_up.html')
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('/login')
 
 
-def testFunction(request):
-    print("i am working")
-    user = User.objects.get(id=26)
-    Chat.objects.create(participant1 = request.user, participant2 = user)
-    answer = {"im working": "im working"}
-    testFunction2()
+def add_chat(request):
+    if request.method == 'POST':
+        user = User.objects.get(id = request.POST.get("userId"))
+        Chat.objects.create(participant1 = request.user, participant2 = user)
+        answer = {"im working": "im working"}
+        testFunction2()
     return JsonResponse(answer,safe=False)
 
 def testFunction2():

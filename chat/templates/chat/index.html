@@ -1,28 +1,42 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
 
+
+<style>
+
+    .d-none{
+        display: none;
+    }
+    
+</style>
+
 <script>
+    let chatIdGlobal = null;
     async function sendMessage() {
         let fd = new FormData();
         let token = '{{ csrf_token }}';
+        if(chatIdGlobal != null){
 
+            
         fd.append('textmessage', messageField.value);
+        fd.append('chatId', chatIdGlobal);
         fd.append('csrfmiddlewaretoken', token);
         try {
-            messageContainer.innerHTML += `
+            {% comment %} messageContainer.innerHTML += `
                 <div id="deleteMessage">
                     <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i class="color-gray">${messageField.value} </i>
-                </div>`;
+                </div>`; {% endcomment %}
             let response = await fetch('/', {
                 method: 'POST',
                 body: fd
             });
+
             let json = await response.json();
             console.log('json is', json);
-            document.getElementById('deleteMessage').remove();
+            {% comment %} document.getElementById('deleteMessage').remove();
             messageContainer.innerHTML += `
                 <div">
                     <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i>${messageField.value} </i>
-                </div>`;
+                </div>`; {% endcomment %}
 
             console.log('Success!!');
 
@@ -30,79 +44,183 @@
             console.error('An error occured', e);
         }
 
+        }
+
+
     }
 
-    async function testFunction(userId){
+    async function addChatFunction(userId){
         let fd = new FormData();
         let token = '{{ csrf_token }}';
 
-        fd.append('test', "gehts?");
+        fd.append('userId', userId);
         fd.append('csrfmiddlewaretoken', token);
-        console.log("ich wurde geklickt mit folgender User id: ", userId)
-        let response = await fetch('/test/', {
+        try {
+        let response = await fetch('/add_chat/', {
                 method: 'POST',
                 body: fd
         });
 
         let json = await response.json();
         console.log("hier ich worke", json)
+    } catch (e) {
+        console.error('An error occured', e);
+    }
     }
 
+    async function openChatFunction(chatId){
+      
+        chatIdGlobal = chatId;
+        let fd = new FormData();
+        let token = '{{ csrf_token }}';
+
+        fd.append('chatId', chatId);
+        fd.append('csrfmiddlewaretoken', token);
+        try {
+            let response = await fetch('/', {
+                    method: 'POST',
+                    body: fd
+        });
+            console.log('Success!!');
+
+
+       messageContainer.innerHTML = '';
+        messageContainer.innerHTML +=`
+        <div>
+        {% for message in messages %}
+
+
+        <div id="card">
+            <div style="height: 30px; display: flex; justify-content: flex-start;">
+                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+            </div>
+            <div>
+                {{ message.text }}
+            </div>
+            <div id="createdAt">
+                <span>{{message.created_at}}</span>
+            </div>
+          </div>
+        {% endfor %}
+        <div id="sendArea">
+    
+            <form onsubmit="sendMessage(); return false;" method="post">
+                {% csrf_token %}
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
+                    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+                    <label class="mdl-textfield__label" for="messageField">Text...</label>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    <i class="material-icons">send</i>
+                </button>
+            
+            </form>
+    
+        </div>
+    </div>
+        `; 
+
+    } catch (e) {
+        console.error('An error occured', e);
+    }
+    }
+
+   
+
+    function renderAllChats(){
+        messageContainer.innerHTML = '';
+        messageContainer.innerHTML +=`
+        {% for chat in chats %}
+        <div id="chatelement-card"  onclick="openChatFunction({{ chat.id }})">
+        
+
+            {% if request.user.id != chat.participant1.id %}
+
+                <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant1.username }} <i class="material-icons">person</i></div>
+            {% else %}
+           
+            <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant2.username }} <i class="material-icons">person</i></div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        `;
+    }
+
+    function doSomething(){
+        console.log("do something")
+    }
 
 </script>
 <div id="information-bar">
-    <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-        <i class="material-icons">chat</i>
-       </button> 
 
-</div>
-
-<div id="messageContainer">
-    {% for message in messages %}
-
-
-    <div id="card">
-        <div style="height: 30px; display: flex; justify-content: flex-start;">
-            <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
-        </div>
-        <div>
-            {{ message.text }}
-        </div>
-        <div id="createdAt">
-            <span>{{message.created_at}}</span>
-        </div>
-      </div>
-    {% endfor %}
-    <div id="sendArea">
-
-        <form onsubmit="sendMessage(); return false;" method="post">
-            {% csrf_token %}
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input type="hidden" name="redirect" value="{{ redirect }}"/>
-                <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
-                <label class="mdl-textfield__label" for="messageField">Text...</label>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                <i class="material-icons">send</i>
-            </button>
-        
-        </form>
+    <div style="padding-left: 16px">
+        <button onclick="renderAllChats()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+            <i class="material-icons">chat</i>
+           </button> 
 
     </div>
- 
-        
+    <div style="padding-right: 16px">
+        <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+            <i class="material-icons">add</i>
+           </button> 
+
+    </div>
+
+    <div id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
+</div>
+
+
+<div id="messageContainer">
+
+
+    <div id="hideMessages" >
+        {% for message in messages %}
+
+
+        <div id="card">
+            <div style="height: 30px; display: flex; justify-content: flex-start;">
+                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+            </div>
+            <div>
+                {{ message.text }}
+            </div>
+            <div id="createdAt">
+                <span>{{message.created_at}}</span>
+            </div>
+          </div>
+        {% endfor %}
+        <div id="sendArea">
+    
+            <form onsubmit="sendMessage(); return false;" method="post">
+                {% csrf_token %}
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
+                    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+                    <label class="mdl-textfield__label" for="messageField">Text...</label>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                    <i class="material-icons">send</i>
+                </button>
+            
+            </form>
+    
+        </div>
+    </div>
+    
+  
+    
+</div>   
 
 
 </div>
-
-        
             <dialog class="mdl-dialog" style="width: 60vw; height: 80vh">
               <h4 class="mdl-dialog__title">Select your new Chatpartner</h4>
               <div class="mdl-dialog__content" style="width: 90%; height: 80%">
                 <div id="users-container">
 
                     {% for user in users %}
-                    <div id="userelement-card"  onclick="testFunction({% user.ID %})">
+                    <div id="userelement-card"  onclick="addChatFunction({{ user.id }})">
                         <span style="width: 40%;">
                             {{user.username }}
                         </span>
@@ -138,3 +256,9 @@
 </p>
 
 {% endif %} {% endblock %}
+
+<script>
+
+
+    
+</script>

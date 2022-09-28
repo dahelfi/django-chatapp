@@ -29,10 +29,14 @@
               body: fd
           });
           
-          let json = await response.json();
-          if(json.stopLoadingAnimation){
-              document.getElementById('p2').classList.add('d-none');
-          }
+         
+          if(response.ok && response.redirected)
+          window.location.replace(response.url);
+          else{
+          const error = await response.json();
+          console.log(error)
+          document.getElementById('p2').classList.add('d-none');;
+      }
 
       } catch (e) {
           console.error('An error occured', e);
