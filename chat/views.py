@@ -14,26 +14,23 @@ from .forms import SignUpForm
 def index(request):
     if(request.method == "POST"):
         print("Recieved Data" + request.POST["textmessage"])
-        myChat = Chat.objects.get(id=1)
+        myChat = Chat.objects.get(id=2)
         new_message = Message.objects.create(text = request.POST["textmessage"], chat = myChat, author = request.user, reciever = request.user )
         serialized_obj = serializers.serialize('json', [new_message, ])
         return JsonResponse(serialized_obj[1:-1], safe=False)
-    textMessages = Message.objects.filter(chat__id=1)
+    textMessages = Message.objects.all
     allUsers = User.objects.all
-    return render(request, 'chat/index.html', {'messages': textMessages, 'users': allUsers})
+    allChats = Chat.objects.all
+    return render(request, 'chat/index.html', {'messages': textMessages, 'users': allUsers, "chats": allChats})
+
 
 def login_view(request):
-    redirect = request.GET.get('next')
+    redirect = "/"
     if(request.method == "POST"):
         user = authenticate(username = request.POST["username"], password = request.POST["password"])
         if user:
             login(request, user)
-            print("request: ", request.POST.get('redirect'))
-            HttpResponseRedirect(request.POST.get('redirect'))
-            answer = {"stopLoadingAnimation": "true"}
-            #serialized_obj = serializers.serialize('json', [stopLoadingAnimation ])
-            #print("things gone wrong: ", serialized_obj)
-            return JsonResponse( answer, safe=False)
+            return HttpResponseRedirect(redirect)
         else:
             return render(request, 'auth/login.html', {'wrongPassword': True, 'redirect': redirect} )
     return render(request, 'auth/login.html', {'redirect': redirect})
@@ -60,3 +57,15 @@ def sign_up_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+def testFunction(request):
+    print("i am working")
+    user = User.objects.get(id=26)
+    Chat.objects.create(participant1 = request.user, participant2 = user)
+    answer = {"im working": "im working"}
+    testFunction2()
+    return JsonResponse(answer,safe=False)
+
+def testFunction2():
+    print("i am working 2")

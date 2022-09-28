@@ -28,15 +28,15 @@
                 body: fd
             });
             document.getElementById('p2').classList.remove('d-none');
-            let json = await response.json();
-            if(json.stopLoadingAnimation){
+            if(response.status == 400){
+                throw new Error(await response.text())
+            }else{
                 document.getElementById('p2').classList.add('d-none');
-            }
-
+            }          
+           
         } catch (e) {
             console.error('An error occured', e);
         }
-
 
     }
 </script>
