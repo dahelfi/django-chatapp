@@ -1,0 +1,92 @@
+{% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
+
+
+<script>
+    async function sendMessage() {
+        let fd = new FormData();
+        let token = '{{ csrf_token }}';
+
+        fd.append('textmessage', messageField.value);
+        fd.append('csrfmiddlewaretoken', token);
+        try {
+            messageContainer.innerHTML += `
+                <div id="deleteMessage">
+                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i class="color-gray">${messageField.value} </i>
+                </div>`;
+            let response = await fetch('/chat/', {
+                method: 'POST',
+                body: fd
+            });
+            let json = await response.json();
+            console.log('json is', json);
+            document.getElementById('deleteMessage').remove();
+            messageContainer.innerHTML += `
+                <div">
+                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i>${messageField.value} </i>
+                </div>`;
+
+            console.log('Success!!');
+
+
+
+        } catch (e) {
+            console.error('An error occured', e);
+        }
+
+
+    }
+    async function testFunction(json){
+        console.log("hier deine Werte", json);
+    }
+
+</script>
+
+
+
+<div id="messageContainer">
+
+
+
+        {% for message in messages %}
+
+
+        <div id="card">
+            <div style="height: 30px; display: flex; justify-content: flex-start;">
+                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+            </div>
+            <div>
+                {{ message.text }}
+            </div>
+            <div id="createdAt">
+                <span>{{message.created_at}}</span>
+            </div>
+          </div>
+        {% endfor %}
+        <div id="sendArea">
+    
+            <form onsubmit="sendMessage(); return false;" method="post">
+                {% csrf_token %}
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+                    <label class="mdl-textfield__label" for="messageField">Text...</label>
+                </div>
+            
+            
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+                                Send
+                              </button>
+            
+            </form>
+    
+        </div>
+
+    
+  
+    
+</div>   
+
+
+
+
+
+{% endif %} {% endblock %}

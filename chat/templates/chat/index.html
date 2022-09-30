@@ -1,53 +1,9 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
 
 
-<style>
-
-    .d-none{
-        display: none;
-    }
-    
-</style>
-
 <script>
     let chatIdGlobal = null;
-    async function sendMessage() {
-        let fd = new FormData();
-        let token = '{{ csrf_token }}';
-        if(chatIdGlobal != null){
 
-            
-        fd.append('textmessage', messageField.value);
-        fd.append('chatId', chatIdGlobal);
-        fd.append('csrfmiddlewaretoken', token);
-        try {
-            {% comment %} messageContainer.innerHTML += `
-                <div id="deleteMessage">
-                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i class="color-gray">${messageField.value} </i>
-                </div>`; {% endcomment %}
-            let response = await fetch('/', {
-                method: 'POST',
-                body: fd
-            });
-
-            let json = await response.json();
-            console.log('json is', json);
-            {% comment %} document.getElementById('deleteMessage').remove();
-            messageContainer.innerHTML += `
-                <div">
-                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i>${messageField.value} </i>
-                </div>`; {% endcomment %}
-
-            console.log('Success!!');
-
-        } catch (e) {
-            console.error('An error occured', e);
-        }
-
-        }
-
-
-    }
 
     async function addChatFunction(userId){
         let fd = new FormData();
@@ -70,82 +26,27 @@
 
     async function openChatFunction(chatId){
       
-        chatIdGlobal = chatId;
+       
         let fd = new FormData();
         let token = '{{ csrf_token }}';
 
         fd.append('chatId', chatId);
         fd.append('csrfmiddlewaretoken', token);
         try {
-            let response = await fetch('/', {
+            let response = await fetch('/chat/', {
                     method: 'POST',
                     body: fd
         });
             console.log('Success!!');
 
-
-       messageContainer.innerHTML = '';
-        messageContainer.innerHTML +=`
-        <div>
-        {% for message in messages %}
-
-
-        <div id="card">
-            <div style="height: 30px; display: flex; justify-content: flex-start;">
-                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
-            </div>
-            <div>
-                {{ message.text }}
-            </div>
-            <div id="createdAt">
-                <span>{{message.created_at}}</span>
-            </div>
-          </div>
-        {% endfor %}
-        <div id="sendArea">
-    
-            <form onsubmit="sendMessage(); return false;" method="post">
-                {% csrf_token %}
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
-                    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
-                    <label class="mdl-textfield__label" for="messageField">Text...</label>
-                </div>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                    <i class="material-icons">send</i>
-                </button>
-            
-            </form>
-    
-        </div>
-    </div>
-        `; 
+            window.location.replace("/chat/");
 
     } catch (e) {
         console.error('An error occured', e);
     }
     }
 
-   
 
-    function renderAllChats(){
-        messageContainer.innerHTML = '';
-        messageContainer.innerHTML +=`
-        {% for chat in chats %}
-        <div id="chatelement-card"  onclick="openChatFunction({{ chat.id }})">
-        
-
-            {% if request.user.id != chat.participant1.id %}
-
-                <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant1.username }} <i class="material-icons">person</i></div>
-            {% else %}
-           
-            <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant2.username }} <i class="material-icons">person</i></div>
-            {% endif %}
-        </div>
-        {% endfor %}
-        `;
-    }
 
     function doSomething(){
         console.log("do something")
@@ -171,45 +72,21 @@
 </div>
 
 
-<div id="messageContainer">
+<div id="chatContainer">
 
+    {% for chat in chats %}
+        <div id="chatelement-card"  onclick="openChatFunction({{ chat.id }})">
+        
 
-    <div id="hideMessages" >
-        {% for message in messages %}
+            {% if request.user.id != chat.participant1.id %}
 
-
-        <div id="card">
-            <div style="height: 30px; display: flex; justify-content: flex-start;">
-                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
-            </div>
-            <div>
-                {{ message.text }}
-            </div>
-            <div id="createdAt">
-                <span>{{message.created_at}}</span>
-            </div>
-          </div>
-        {% endfor %}
-        <div id="sendArea">
-    
-            <form onsubmit="sendMessage(); return false;" method="post">
-                {% csrf_token %}
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                    <input type="hidden" name="redirect" value="{{ redirect }}"/>
-                    <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
-                    <label class="mdl-textfield__label" for="messageField">Text...</label>
-                </div>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                    <i class="material-icons">send</i>
-                </button>
-            
-            </form>
-    
+                <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant1.username }} <i class="material-icons">person</i></div>
+            {% else %}
+           
+            <div style="display: flex; justify-content: space-between; align-Items: center; width: 80%">{{ chat.participant2.username }} <i class="material-icons">person</i></div>
+            {% endif %}
         </div>
-    </div>
-    
-  
-    
+        {% endfor %}    
 </div>   
 
 
