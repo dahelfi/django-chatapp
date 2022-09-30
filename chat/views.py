@@ -23,14 +23,16 @@ def index(request):
     return render(request, 'chat/index.html', {'users': allUsers, "chats": allChats})
 
 
-
+@login_required(login_url='/login/')
 def message_view(request):
     allUsers = User.objects.all
     allChats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
     if(request.method == "POST"):
         print("ich werde ausgeführt mit der ChatID: "+ request.POST.get("chatId"))
         text_messages = Message.objects.filter(chat_id=request.POST.get("chatId"))
+        text_messages = Message.objects.filter(chat_id=6)
         return render(request, 'chat/chat.html', {'messages': text_messages, 'users': allUsers, "chats": allChats})
+    #text_messages = Message.objects.filter(chat_id=6)
     return render(request, 'chat/chat.html', {'users': allUsers, "chats": allChats})
 
 
