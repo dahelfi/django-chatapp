@@ -33,9 +33,14 @@
           if(response.ok && response.redirected)
           window.location.replace(response.url);
           else{
-          const error = await response.json();
+          const error = await response;
           console.log(error)
-          document.getElementById('p2').classList.add('d-none');;
+          document.getElementById('p2').classList.add('d-none');
+          document.getElementById('errorMessage').innerHTML = `<span style="color: red">username or email are already taken or password does not fit the password rules <br/> please try again</span>`;
+          username.value = '';
+          email.value = "";
+          password1.value = '';
+          password2.value = '';
       }
 
       } catch (e) {
@@ -94,11 +99,14 @@
                   Register
                 </button> 
                 <div style="display: flex;">
-                  <p>Already signed up?</p>
-                  <a href="/login/">Sign Up</a>
+                  <p style="margin-right: 8px; margin-left: 8px">Already signed up?</p>
+                  <a style="margin-top: 4px" href="/login/">Login</a>
                 </div>
           </div>
         </form> 
+      </div>
+      <div id="errorMessage" style="display: flex; justify-content: center; align-items: center; margin-top: 16px; margin: 8px">
+
       </div>
     </div>
 </div>

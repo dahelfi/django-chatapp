@@ -3,64 +3,126 @@
 
 <script>
     async function sendMessage() {
+        document.getElementById('p2').classList.remove('d-none');
         let fd = new FormData();
         let token = '{{ csrf_token }}';
+        let url = window.location.href.toString()
+        let chatId = url.substring(url.length-3, url.length-1);
+        let fetchUrl = "/chat/"+chatId+"/"
+        let textfield =  messageField.value
 
+        
         fd.append('textmessage', messageField.value);
         fd.append('csrfmiddlewaretoken', token);
+
         try {
-            messageContainer.innerHTML += `
-                <div id="deleteMessage">
-                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i class="color-gray">${messageField.value} </i>
-                </div>`;
-            let response = await fetch('/chat/', {
+        messageContainer.innerHTML += `
+        <div id="deleteMessage">
+            <div id="loggedInUserMessage">
+                <div id="card">
+                    <div style="height: 30px; display: flex; justify-content: flex-start;">
+                        <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
+                    </div>
+                    <div>
+                        ${textfield}
+                    </div>
+                    <div id="createdAt">
+                        <span>{{created}}</span>
+                    </div>
+              </div>
+            </div>
+        
+        </div>`;
+
+            let response = await fetch(fetchUrl, {
                 method: 'POST',
                 body: fd
             });
             let json = await response.json();
-            console.log('json is', json);
+            let jsonObject = JSON.parse(json);
+            console.log('json is: ', jsonObject);
             document.getElementById('deleteMessage').remove();
+
             messageContainer.innerHTML += `
-                <div">
-                    <span class="color-gray">[DATUM]</span> {{ request.user.first_name }}: <i>${messageField.value} </i>
-                </div>`;
-
-            console.log('Success!!');
-
-
+            <div>
+                <div id="loggedInUserMessage">
+                    <div id="card">
+                        <div style="height: 30px; display: flex; justify-content: flex-start;">
+                            <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
+                        </div>
+                        <div>
+                            ${textfield}
+                        </div>
+                        <div id="createdAt">
+                            <span>today</span>
+                        </div>
+                  </div>
+                </div>
+            
+            </div>`;
+            document.getElementById('p2').classList.add('d-none');
+            messageField.value ='';
 
         } catch (e) {
             console.error('An error occured', e);
         }
 
-
     }
-    async function testFunction(json){
-        console.log("hier deine Werte", json);
+
+    function renderAllChats(){
+        window.location.replace("/");
     }
 
 </script>
 
+<div id="information-bar" style="display: flex; flex-direction: column">
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center">
+        <button style="margin-left: 16px" onclick="renderAllChats()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+            <i class="material-icons">chat</i>
+    </button> 
+    <h5>{{ recieverUser }}<h5/>
+    </div>
+    
+   
+</div>
 
 
 <div id="messageContainer">
-
-
-
+    <div style="z-index: 4" id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
         {% for message in messages %}
+        {% if request.user == message.author %}
 
-
-        <div id="card">
-            <div style="height: 30px; display: flex; justify-content: flex-start;">
-                <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
-            </div>
-            <div>
-                {{ message.text }}
-            </div>
-            <div id="createdAt">
-                <span>{{message.created_at}}</span>
-            </div>
+        <div id="loggedInUserMessage">
+            <div id="card">
+                <div style="height: 30px; display: flex; justify-content: flex-start;">
+                    <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+                </div>
+                <div>
+                    {{ message.text }}
+                </div>
+                <div id="createdAt">
+                    <span>{{message.created_at}}</span>
+                </div>
           </div>
+        </div>
+
+          {% else %}
+
+          <div id="notloggedInUserMessage">
+            <div id="card">
+                <div style="height: 30px; display: flex; justify-content: flex-start;">
+                    <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
+                </div>
+                <div>
+                    {{ message.text }}
+                </div>
+                <div id="createdAt">
+                    <span>{{message.created_at}}</span>
+                </div>
+            </div>
+        </div>
+
+          {% endif %}
         {% endfor %}
         <div id="sendArea">
     
@@ -71,17 +133,14 @@
                     <label class="mdl-textfield__label" for="messageField">Text...</label>
                 </div>
             
-            
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                                 Send
-                              </button>
+                </button>
             
             </form>
     
         </div>
 
-    
-  
     
 </div>   
 

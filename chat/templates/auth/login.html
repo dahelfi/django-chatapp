@@ -31,9 +31,13 @@
             if(response.ok && response.redirected)
                 window.location.replace(response.url);
             else{
-                const error = await response.json();
+                const error = await response;
                 console.log(error)
-                document.getElementById('p2').classList.add('d-none');;
+                document.getElementById('p2').classList.add('d-none');
+                document.getElementById('errorMessage').innerHTML = `<span style="color: red">Password or username incorrect <br/> please try again</span>`;
+                username.value = '';
+                password.value = '';
+
             }
 
         } catch (e) {
@@ -73,20 +77,20 @@
                 <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                     Login
                   </button> 
-                  <div style="display: flex; align-items: center; height: 100%; width: 100%;">
-                    <p style="display: flex; align-items: center;">Not registered yet?</p>
-                    <a href="/sign_up/?next={{redirect}}">Sign Up</a>
+                  <div style="display: flex;">
+                    <p style="margin-right: 8px; margin-left: 8px">Not registered yet?</p>
+                    <a style="margin-top: 4px" href="/sign_up">Sign Up</a>
                   </div>
                    
-             
             </div>
           
         </form> 
+        <div id="errorMessage" style="  display: flex; justify-content: center; align-items: center; margin-top: 16px;">
+
+        </div>
     </div>
       </div>
-    {% if wrongPassword %}
-        <p>Benutzername oder Passwort ist falsch</p>
-    {% endif %}
+     
 
 {%  endblock %}
 

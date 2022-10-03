@@ -1,4 +1,3 @@
-
 .page-content{
     display: flex;
     align-items: center;
@@ -6,18 +5,30 @@
     width: 100vw;
     height: 93vh;
     position: relative;
-  
 }
 
 .text-gray{
   color: gray;
 }
 
+#header{
+  color: white; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  width: 100%;
+  height: 56px; 
+  position: fixed; 
+  background-color: #3f50b5; 
+  padding-left: 32px; 
+  padding-right: 150px;
+  z-index: 4;
+}
 
 
 
 #card{
-  height: 200px;
+ 
   width: 250px;
   padding: 16px;
   margin: 20px;
@@ -34,13 +45,12 @@ right: 0px;
 top: 56px;
 box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 height: 56px;
-z-index: 4;
 background-color: white;
 display: flex;
 align-items: center;
 justify-content: space-between;
-
 width: 100%;
+z-index: 4;
 }
 
 #userelement-card{
@@ -56,8 +66,103 @@ width: 100%;
 
 }
 
+.mdl-dialog{
+  width: 60vw; 
+  height: 80vh;
+}
+.mdl-dialog__content{
+ width: 90%; 
+ height: 80%
+}
+
+.span-responsive{
+  width: 40%;
+}
+
 #userelement-card:hover{
   border-bottom: 2px solid #ff4081;
+}
+
+@media (max-width: 900px) {
+  .mdl-dialog__title{
+    font-size: 24px !important;
+  }
+
+  .span-responsive{
+    width: 45%;
+  }
+  
+  .mdl-dialog{
+    width: 70vw; 
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 700px) {
+  .mdl-dialog__title{
+    font-size: 24px !important;
+  }
+
+  .span-responsive{
+    width: 45%;
+  }
+
+  .mdl-dialog__content{
+    width: 95%; 
+    padding: 10px;
+   }
+  
+  .mdl-dialog{
+    width: 80vw ; 
+    overflow-x: hidden;
+  }
+ 
+}
+
+@media (max-width: 500px) {
+  .mdl-dialog__title{
+    font-size: 20px !important;
+  }
+  .mdl-dialog__content{
+    font-size: 12px !important;
+    padding: 0px;
+  }
+  
+  .mdl-dialog{
+    width: 85vw ; 
+    overflow-x: hidden;
+  }
+
+  #userelement-card{
+    height: 50px;
+    margin-bottom: 32px; 
+  }
+}
+
+@media (max-width: 400px) {
+  .mdl-dialog__title{
+    font-size: 18px !important;
+  }
+  .mdl-dialog__content{
+    font-size: 12px !important;
+    display: flex; 
+    justify-content: center;
+    width: 100% !important;
+  }
+
+  #users-container{
+    width: 100%;
+  }
+  
+  .mdl-dialog{
+    width: 85vw ; 
+    overflow-x: hidden;
+  }
+
+  #userelement-card{
+    height: 50px;
+    margin-bottom: 32px; 
+  }
 }
 
 #createdAt{
@@ -73,10 +178,37 @@ width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 160px;
+  padding-top: 100px;
+}
+
+#information-bar-chat{
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  top: 56px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  height: 56px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 
+#loggedInUserMessage{
+  width: 90vw;
+  display: flex;
+  justify-content: flex-start;
+
+}
+
+#notloggedInUserMessage{
+  width: 90vw;
+  display: flex;
+  justify-content: flex-end;
+
+}
 
 #chatContainer{
   height: 100%;
@@ -120,3 +252,5 @@ width: 100%;
 .d-none{
     display: none;
 }
+
+
