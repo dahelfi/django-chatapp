@@ -25,13 +25,10 @@
   z-index: 4;
 }
 
-
-
 #card{
- 
   width: 250px;
   padding: 16px;
-  margin: 20px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
   border-radius: 5px;
@@ -83,73 +80,6 @@ z-index: 4;
   border-bottom: 2px solid #ff4081;
 }
 
-@media (max-width: 900px) {
-  .mdl-dialog__title{
-    font-size: 24px !important;
-  }
-
-  .span-responsive{
-    width: 45%;
-  }
-  
-  .mdl-dialog{
-    width: 70vw; 
-    overflow-x: hidden;
-  }
-}
-
-@media (max-width: 700px) {
-  .mdl-dialog__title{
-    font-size: 24px !important;
-  }
-
-  .span-responsive{
-    width: 45%;
-  }
-
-  .mdl-dialog__content{
-    width: 95%; 
-    padding: 10px;
-   }
-  
-  .mdl-dialog{
-    width: 80vw ; 
-    overflow-x: hidden;
-  }
- 
-}
-
-@media (max-width: 500px) {
-  .mdl-dialog__title{
-    font-size: 20px !important;
-  }
-  .mdl-dialog__content{
-    font-size: 12px !important;
-    padding: 0px;
-  }
-  
-  .mdl-dialog{
-    width: 85vw ; 
-    overflow-x: hidden;
-  }
-
-  #userelement-card{
-    height: 50px;
-    margin-bottom: 32px; 
-  }
-}
-
-@media (max-width: 400px) {
-  .mdl-dialog__title{
-    font-size: 18px !important;
-  }
-  .mdl-dialog__content{
-    font-size: 12px !important;
-    display: flex; 
-    justify-content: center;
-    width: 100% !important;
-  }
-
   #users-container{
     width: 100%;
   }
@@ -163,7 +93,7 @@ z-index: 4;
     height: 50px;
     margin-bottom: 32px; 
   }
-}
+
 
 #createdAt{
   width: 100%;
@@ -178,7 +108,7 @@ z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 100px;
+  padding-top: 120px;
 }
 
 #information-bar-chat{
@@ -247,10 +177,76 @@ z-index: 4;
   border-bottom: 2px solid #ff4081;
 }
 
-
-
 .d-none{
     display: none;
 }
 
+/* ----------------------Responsive--------------*/
 
+@media (max-width: 900px) {
+  .mdl-dialog__title{
+    font-size: 24px !important;
+  } 
+
+  .span-responsive{
+    width: 45%;
+  }
+  
+  .mdl-dialog{
+    width: 70vw; 
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 700px) {
+  .mdl-dialog__title{
+    font-size: 24px !important;
+  }
+
+  .span-responsive{
+    width: 45%;
+  }
+
+  .mdl-dialog__content{
+    width: 95%; 
+    padding: 10px;
+   }
+  
+  .mdl-dialog{
+    width: 80vw ; 
+    overflow-x: hidden;
+  }
+ 
+}
+
+@media (max-width: 500px) {
+  .mdl-dialog__title{
+    font-size: 20px !important;
+  }
+  .mdl-dialog__content{
+    font-size: 12px !important;
+    padding: 0px;
+  }
+  
+  .mdl-dialog{
+    width: 85vw ; 
+    overflow-x: hidden;
+  }
+
+  #userelement-card{
+    height: 50px;
+    margin-bottom: 32px; 
+  }
+}
+
+@media (max-width: 400px) {
+  .mdl-dialog__title{
+    font-size: 18px !important;
+  }
+  .mdl-dialog__content{
+    font-size: 12px !important;
+    display: flex; 
+    justify-content: center;
+    width: 100% !important;
+  }
+}

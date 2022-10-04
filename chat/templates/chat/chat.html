@@ -1,80 +1,6 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
 
 
-<script>
-    async function sendMessage() {
-        document.getElementById('p2').classList.remove('d-none');
-        let fd = new FormData();
-        let token = '{{ csrf_token }}';
-        let url = window.location.href.toString()
-        let chatId = url.substring(url.length-3, url.length-1);
-        let fetchUrl = "/chat/"+chatId+"/"
-        let textfield =  messageField.value
-
-        
-        fd.append('textmessage', messageField.value);
-        fd.append('csrfmiddlewaretoken', token);
-
-        try {
-        messageContainer.innerHTML += `
-        <div id="deleteMessage">
-            <div id="loggedInUserMessage">
-                <div id="card">
-                    <div style="height: 30px; display: flex; justify-content: flex-start;">
-                        <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
-                    </div>
-                    <div>
-                        ${textfield}
-                    </div>
-                    <div id="createdAt">
-                        <span>{{created}}</span>
-                    </div>
-              </div>
-            </div>
-        
-        </div>`;
-
-            let response = await fetch(fetchUrl, {
-                method: 'POST',
-                body: fd
-            });
-            let json = await response.json();
-            let jsonObject = JSON.parse(json);
-            console.log('json is: ', jsonObject);
-            document.getElementById('deleteMessage').remove();
-
-            messageContainer.innerHTML += `
-            <div>
-                <div id="loggedInUserMessage">
-                    <div id="card">
-                        <div style="height: 30px; display: flex; justify-content: flex-start;">
-                            <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
-                        </div>
-                        <div>
-                            ${textfield}
-                        </div>
-                        <div id="createdAt">
-                            <span>today</span>
-                        </div>
-                  </div>
-                </div>
-            
-            </div>`;
-            document.getElementById('p2').classList.add('d-none');
-            messageField.value ='';
-
-        } catch (e) {
-            console.error('An error occured', e);
-        }
-
-    }
-
-    function renderAllChats(){
-        window.location.replace("/");
-    }
-
-</script>
-
 <div id="information-bar" style="display: flex; flex-direction: column">
     <div style="width: 100%; display: flex; justify-content: space-between; align-items: center">
         <button style="margin-left: 16px" onclick="renderAllChats()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
@@ -93,7 +19,7 @@
         {% if request.user == message.author %}
 
         <div id="loggedInUserMessage">
-            <div id="card">
+            <div id="card" style="background-color: #E3F2FD">
                 <div style="height: 30px; display: flex; justify-content: flex-start;">
                     <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
                 </div>
@@ -109,7 +35,7 @@
           {% else %}
 
           <div id="notloggedInUserMessage">
-            <div id="card">
+            <div id="card" style="background-color: #FCE4EC">
                 <div style="height: 30px; display: flex; justify-content: flex-start;">
                     <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
                 </div>

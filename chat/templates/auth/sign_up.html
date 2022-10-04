@@ -1,56 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-<style>
-  .d-none{
-      display: none;
-  }
-
-</style>
-
-<script>
-
-  async function sendRegisterData() {
-      document.getElementById('p2').classList.remove('d-none');
-      let fd = new FormData();
-      let token = '{{ csrf_token }}';
-      
-      fd.append('username', username.value);
-      fd.append('email', email.value);
-      fd.append('password1', password1.value)
-      fd.append('password2', password2.value)
-      fd.append('csrfmiddlewaretoken', token);
-      
-      try {
-          
-          let response = await fetch('/sign_up/', {
-              method: 'POST',
-              body: fd
-          });
-          
-         
-          if(response.ok && response.redirected)
-          window.location.replace(response.url);
-          else{
-          const error = await response;
-          console.log(error)
-          document.getElementById('p2').classList.add('d-none');
-          document.getElementById('errorMessage').innerHTML = `<span style="color: red">username or email are already taken or password does not fit the password rules <br/> please try again</span>`;
-          username.value = '';
-          email.value = "";
-          password1.value = '';
-          password2.value = '';
-      }
-
-      } catch (e) {
-          console.error('An error occured', e);
-      }
-
-
-  }
-</script>
-
 <div>
     <div style="box-shadow: 10px 10px 100px rgba(0,0,0,0.19), 0px 10px 10px rgba(0,0,0,0.23); border-radius: 5px;" class="demo-card-wide mdl-card mdl-shadow--2dp">
         <div class="mdl-card__title">
