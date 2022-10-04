@@ -80,19 +80,19 @@ z-index: 4;
   border-bottom: 2px solid #ff4081;
 }
 
-  #users-container{
+#users-container{
     width: 100%;
-  }
+}
   
-  .mdl-dialog{
+.mdl-dialog{
     width: 85vw ; 
     overflow-x: hidden;
-  }
+}
 
-  #userelement-card{
+#userelement-card{
     height: 50px;
     margin-bottom: 32px; 
-  }
+}
 
 
 #createdAt{

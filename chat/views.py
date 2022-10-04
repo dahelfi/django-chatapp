@@ -11,18 +11,20 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required(login_url='/login/')
+@csrf_exempt
 def index(request):
     all_users = User.objects.all
     all_chats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
     if request.method == 'POST':
         user = User.objects.get(id = request.POST.get("userId"))
-        new_user = Chat.objects.create(participant1 = request.user, participant2 = user)
-        serialized_obj = serializers.serialize('json', [new_user, ])
+        new_chat = Chat.objects.create(participant1 = request.user, participant2 = user)
+        serialized_obj = serializers.serialize('json', [new_chat, ])
         return JsonResponse(serialized_obj[1:-1], safe=False)
     return render(request, 'chat/index.html', {'users': all_users, "chats": all_chats})
 
 
 @login_required(login_url='/login/')
+@csrf_exempt
 def message_view(request, id):
     all_users = User.objects.all
     all_chats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
