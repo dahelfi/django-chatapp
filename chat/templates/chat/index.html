@@ -1,12 +1,8 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
-
-
 <script>
     async function addChatFunction(userId){
-        console.log("hier deine userId: ", userId)
         let fd = new FormData();
         let token = '{{ csrf_token }}';
-    
         fd.append('userId', userId);
         fd.append('csrfmiddlewaretoken', token);
         try {
@@ -15,9 +11,9 @@
                 method: 'POST',
                 body: fd
         });
-    
         let json = await response.json();
         let responseObject = JSON.parse(json);
+
         openChatFunction(responseObject.pk)
     
     } catch (e) {
@@ -29,22 +25,19 @@
         console.log('Success!!');
         let url = "/chat/"+chatId
         window.location.replace(url);
+        
     }
 </script>
 <div id="information-bar">
-
     <div style="padding-left: 32px">
     <h6>your chats</h6>
-
     </div>
     <div style="padding-right: 16px">
         <button id="show-dialog" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
             <i class="material-icons">add</i>
            </button> 
     </div>
-
 </div>
-
 
 <div id="chatContainer">
 
@@ -66,7 +59,7 @@
 
 </div>
             <dialog class="mdl-dialog">
-              <h4 class="mdl-dialog__title">Select your new Chatpartner</h4>
+              <h4 class="mdl-dialog__title">Select your Chatpartner</h4>
               <div class="mdl-dialog__content">
                 <div id="users-container">
 

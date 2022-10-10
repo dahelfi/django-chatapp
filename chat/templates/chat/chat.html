@@ -1,24 +1,22 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
 
-
 <script>
     let actualChatId = '{{ chatId }}';
 
     async function sendMessage() {
         let textfield = messageField.value;
-        if(textfield != undefined || textfield != ''){
+        if(textfield.length >= 1){
         document.getElementById('p2').classList.remove('d-none');
         let fd = new FormData();
         let token = '{{ csrf_token }}';
         let fetchUrl = "/chat/"+actualChatId+"/"
         let textfield =  messageField.value
     
-        console.log("ich werde ausgeführt: ", fetchUrl)
         fd.append('textmessage', messageField.value);
         fd.append('csrfmiddlewaretoken', token);
     
         try {
-        messageContainer.innerHTML += `
+        messagecontainer.innerHTML += `
         <div id="deleteMessage">
             <div id="loggedInUserMessage">
                 <div id="card">
@@ -42,10 +40,9 @@
             });
             let json = await response.json();
             let jsonObject = JSON.parse(json);
-            console.log('json is: ', jsonObject);
             document.getElementById('deleteMessage').remove();
     
-            messageContainer.innerHTML += `
+            messagecontainer.innerHTML += `
             <div>
                 <div id="loggedInUserMessage">
                     <div id="card" style="background-color: #E3F2FD">
@@ -64,10 +61,11 @@
             </div>`;
             document.getElementById('p2').classList.add('d-none');
             messageField.value ='';
-    
+           
         } catch (e) {
             console.error('An error occured', e);
         }
+        scrollDown();
     }
     }
 
@@ -83,12 +81,10 @@
     </button> 
     <h5>{{ recieverUser }}<h5/>
     </div>
-    
-   
 </div>
 
-
-<div id="messageContainer">
+<div id="workspace">
+    <div id="messagecontainer">
     <div style="z-index: 4" id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
         {% for message in messages %}
         {% if request.user == message.author %}
@@ -106,9 +102,7 @@
                 </div>
           </div>
         </div>
-
           {% else %}
-
           <div id="notloggedInUserMessage">
             <div id="card" style="background-color: #FCE4EC">
                 <div style="height: 30px; display: flex; justify-content: flex-start;">
@@ -122,31 +116,26 @@
                 </div>
             </div>
         </div>
-
           {% endif %}
         {% endfor %}
+    </div>
         <div id="sendArea">
-    
             <form onsubmit="sendMessage(); return false;" method="post">
                 {% csrf_token %}
                 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                     <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
                     <label class="mdl-textfield__label" for="messageField">Text...</label>
                 </div>
-            
                 <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
                                 Send
-                </button>
-            
+                </button>         
             </form>
-    
         </div>
-
-    
 </div>   
-
-
-
-
-
+<script>
+    function scrollDown(){
+        let objDiv = document.getElementById("messagecontainer");
+        objDiv.scrollTop = objDiv.scrollHeight; 
+    }
+</script>
 {% endif %} {% endblock %}
