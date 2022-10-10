@@ -58,7 +58,6 @@ def message_view(request, id):
         return JsonResponse(serialized_obj[1:-1], safe=False)
     return render(request, 'chat/chat.html', {'messages': text_messages,'users': all_users, "chats": all_chats, "recieverUser": reciever_user, "chatId": id})
 
-
 @csrf_exempt
 def login_view(request):
     redirect = "/"
@@ -70,8 +69,6 @@ def login_view(request):
         else:
             return HttpResponseRedirect(request)
     return render(request, 'auth/login.html')
-
-
 
 @csrf_exempt
 def sign_up_view(request):
