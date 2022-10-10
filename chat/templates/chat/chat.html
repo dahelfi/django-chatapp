@@ -12,41 +12,36 @@
         document.getElementById('p2').classList.remove('d-none');
         let fd = new FormData();
         let token = '{{ csrf_token }}';
-        let fetchUrl = "/chat/"+actualChatId+"/"
-        let textfield =  messageField.value
-    
         fd.append('textmessage', messageField.value);
         fd.append('csrfmiddlewaretoken', token);
-    
         try {
-        messagecontainer.innerHTML += `
-        <div id="deleteMessage">
-            <div id="loggedInUserMessage">
-                <div id="card">
-                    <div style="height: 30px; display: flex; justify-content: flex-start;">
-                        <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
-                    </div>
-                    <div>
-                        ${textfield}
-                    </div>
-                    <div id="createdAt">
-                        <span>{{created}}</span>
-                    </div>
-              </div>
-            </div>
-        
-        </div>`;
-    
-            let response = await fetch(fetchUrl, {
+        messagecontainer.innerHTML +=
+            `
+            <div id="deleteMessage">
+                <div id="loggedInUserMessage">
+                    <div id="card">
+                        <div style="height: 30px; display: flex; justify-content: flex-start;">
+                            <p style="font-size: 25px; height: 30px;">{{ request.user.username }}</p>
+                        </div>
+                        <div>
+                            ${textfield}
+                        </div>
+                        <div id="createdAt">
+                            <span>{{created}}</span>
+                        </div>
+                  </div>
+                </div>
+            </div>`;
+       
+            let response = await fetch("/chat/"+actualChatId+"/", {
                 method: 'POST',
                 body: fd
             });
             let json = await response.json();
             let jsonObject = JSON.parse(json);
-            document.getElementById('deleteMessage').remove();
-    
-            messagecontainer.innerHTML += `
-            <div>
+            console.log("json: ", jsonObject.fields.text)
+           document.getElementById('deleteMessage').remove();
+            messagecontainer.innerHTML +=         `<div>
                 <div id="loggedInUserMessage">
                     <div id="card" style="background-color: #E3F2FD">
                         <div style="height: 30px; display: flex; justify-content: flex-start;">
@@ -64,14 +59,13 @@
             </div>`;
             document.getElementById('p2').classList.add('d-none');
             messageField.value ='';
-           
         } catch (e) {
             console.error('An error occured', e);
         }
         scrollDown();
     }
     }
-
+    
      /*
     This function returns the user to the index.html
     */
@@ -80,8 +74,8 @@
     }
     
 </script>
-<div id="information-bar" >
-    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; height: 40px">
+<div id="information-bar-chat" >
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; height: 50px">
         <button style="margin-left: 16px" onclick="renderAllChats()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
             <i class="material-icons">chat</i>
     </button> 
@@ -98,7 +92,7 @@
 
         <div id="loggedInUserMessage">
             <div id="card" style="background-color: #E3F2FD">
-                <div style="height: 30px; display: flex; justify-content: flex-start;">
+                <div style="min-height: 30px; display: flex; justify-content: flex-start;">
                     <p style="font-size: 25px; height: 30px;">{{ message.author }}</p>
                 </div>
                 <div>
