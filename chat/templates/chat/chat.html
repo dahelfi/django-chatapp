@@ -1,8 +1,11 @@
 {% extends "base.html" %} {% block content %} {% if request.user.is_authenticated %}
 
 <script>
-    let actualChatId = '{{ chatId }}';
+    let actualChatId = '{{ chatId }}';//this varuable saves the chat id of the actual chat 
 
+    /*
+    This function is to send a message 
+    */
     async function sendMessage() {
         let textfield = messageField.value;
         if(textfield.length >= 1){
@@ -69,23 +72,27 @@
     }
     }
 
+     /*
+    This function returns the user to the index.html
+    */
     function renderAllChats(){
         window.location.replace("/");
     }
     
 </script>
-<div id="information-bar" style="display: flex; flex-direction: column">
-    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center">
+<div id="information-bar" >
+    <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; height: 40px">
         <button style="margin-left: 16px" onclick="renderAllChats()" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
             <i class="material-icons">chat</i>
     </button> 
     <h5>{{ recieverUser }}<h5/>
     </div>
+    <div style="z-index: 4" id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
 </div>
 
 <div id="workspace">
     <div id="messagecontainer">
-    <div style="z-index: 4" id="p2" class="mdl-progress mdl-js-progress mdl-progress__indeterminate d-none"></div>
+    
         {% for message in messages %}
         {% if request.user == message.author %}
 
@@ -133,6 +140,9 @@
         </div>
 </div>   
 <script>
+     /*
+    This function scrolls the chat down to the message that is sended right now
+    */
     function scrollDown(){
         let objDiv = document.getElementById("messagecontainer");
         objDiv.scrollTop = objDiv.scrollHeight; 

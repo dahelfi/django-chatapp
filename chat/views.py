@@ -14,7 +14,10 @@ from django.views.decorators.csrf import csrf_exempt
 @login_required(login_url='/login/')
 @csrf_exempt
 def index(request):
-    
+    """
+    This function renders the overview over all functionalities and possibiltes this programm provides and sends all information 
+    the frontend need. 
+    """
     all_users = User.objects.all()
     all_chats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
     if request.method == 'POST':
@@ -30,6 +33,10 @@ def index(request):
     return render(request, 'chat/index.html', {'users': all_users, "chats": all_chats})
 
 def checkAndPreventDoubles(participant1, participant2):
+    """
+    This function checks if a chat kombination of participant 1 and 2 already exists. If a chat exists this function returns 
+    the chat and if not that this function returns NONE.
+    """
     possibility1 = Chat.objects.filter(participant1 = participant1) and Chat.objects.filter(participant2 = participant2)
     possibility2 = Chat.objects.filter(participant1 = participant2) and Chat.objects.filter(participant2 = participant1)
     if(possibility1):
@@ -43,12 +50,16 @@ def checkAndPreventDoubles(participant1, participant2):
 @login_required(login_url='/login/')
 @csrf_exempt
 def message_view(request, id):
+    """
+    This function checks render the chat.html view and calculates all information that are needed in the frontend. If a
+    post request reach this endpoint a new message will be created and sended to the frontend. 
+    """
     all_users = User.objects.all
     all_chats = Chat.objects.filter(participant1 = request.user.id) | Chat.objects.filter(participant2 = request.user.id)
     text_messages = Message.objects.filter(chat_id=id)
     my_chat = Chat.objects.get(id=id)
     if(request.user.id == my_chat.participant1.id):
-            reciever_user = my_chat.participant2
+        reciever_user = my_chat.participant2
     else:
         reciever_user = my_chat.participant1
     if(request.method == "POST"):
@@ -60,6 +71,9 @@ def message_view(request, id):
 
 @csrf_exempt
 def login_view(request):
+    """
+    This function renders the login page and manages the incoming requests depending of the right or wrong credentials 
+    """
     redirect = "/"
     if(request.method == "POST"):
         user = authenticate(username = request.POST["username"], password = request.POST["password"])
@@ -72,6 +86,9 @@ def login_view(request):
 
 @csrf_exempt
 def sign_up_view(request):
+    """
+    This function renders the register page and provides the opportunity to create a new user
+    """
     redirect = "/"
     if request.method == 'POST' and (request.POST.get("password1") == request.POST.get("password2")):
         user = User.objects.create_user(username = request.POST.get("username"),email=request.POST.get("email"),password=request.POST.get("password1"))
@@ -84,6 +101,9 @@ def sign_up_view(request):
     return render(request, 'auth/sign_up.html')
 
 def logout_view(request):
+    """
+    This function provides the opportunity to end a session and logout
+    """
     logout(request)
     return redirect('/login')
 

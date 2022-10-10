@@ -2,6 +2,9 @@
 {% block content %}
 
 <script>
+  /*
+    This function send the register data to the backend and handles the answer from the backend
+  */
   async function sendRegisterData() {
     document.getElementById('p2').classList.remove('d-none');
     let fd = new FormData();

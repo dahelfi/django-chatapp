@@ -2,6 +2,9 @@
 {% block content %}
 
 <script>
+     /*
+    This function send the login data to the backend and handles the answer from the backend
+    */
     async function sendLoginData() {
         let fd = new FormData();
         let token = '{{ csrf_token }}';
