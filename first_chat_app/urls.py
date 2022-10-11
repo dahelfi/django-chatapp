@@ -14,7 +14,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .settings import STATIC_ROOT, STATIC_URL
+from first_chat_app import  settings 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf.urls.static import static
 
@@ -27,5 +27,5 @@ urlpatterns = [
     path("login/", login_view),
     path("sign_up/", sign_up_view, name="sign_up"),
     path("logout/", logout_view, name="logout"),
-    static(STATIC_URL, document_root= STATIC_ROOT)
+    static(settings.STATIC_URL, document_root= settings.STATIC_ROOT)
 ]
